@@ -1,0 +1,46 @@
+{
+    "dir": "ltr",
+    "lang": "en",
+    "name": "LampTouch Online Shopping",
+    "scope": "/f/",
+    "id": "FireFly",
+    "display": "standalone",
+    "start_url": "http://localhost/f/index.php",
+    "short_name": "LampTouch",
+    "theme_color": "#FF0000",
+    "description": "LampTouch PWA starter",
+    "orientation": "any",
+    "background_color": "#FFFFFF",
+    "related_applications": [],
+    "prefer_related_applications": true,
+    "icons": [
+        {
+            "src": "/f/public/img/lamptouch44.png",
+            "sizes": "44x44",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "/f/public/img/lamptouch76.png",
+            "sizes": "76x76",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "/f/public/img/lamptouch144.png",
+            "sizes": "144x144",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "/f/public/img/lamptouch512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any maskable"
+        }        
+    ],
+    "url": "http://localhost/f/index.php",
+    "screenshots": [
+
+    ]
+}
