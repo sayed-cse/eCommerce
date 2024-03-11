@@ -1,0 +1,13 @@
+User-agent: *
+Disallow: /public
+Disallow: /public/uploads
+Disallow: /public/img
+Disallow: /public/js
+Disallow: /public/css
+Disallow: /public/schemas
+Disallow: /cache
+Disallow: /apps/config
+Disallow: /apps/back
+Disallow: /*?
+Allow: /*?$
+Sitemap: http://localhost/f/sitemap/index
