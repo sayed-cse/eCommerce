@@ -902,13 +902,55 @@ foreach ($paginatorInstances as $index => $paginator) { $this->view->{"pstage" .
             $this->view->pick('index/invoice');
         }else{return $this->response->redirect($this->router->getControllerName('index'));}
     }
-    public function aboutusAction(){ $this->view->pick('index/cookies'); }
-    public function propertyAction(){ $this->view->pick('index/cookies'); }
-    public function privacyAction(){ $this->view->pick('index/cookies'); }
-    public function cookiesAction(){ $this->view->pick('index/cookies'); }
-    public function termsAction(){ $this->view->pick('index/cookies'); }
-    public function legalAction(){ $this->view->pick('index/cookies'); }
-    public function feedbackAction(){ $this->view->pick('index/cookies'); }  
+    public function aboutusAction(){ 
+        $uid = $this->session->get('id');
+        $type = $this->session->get('type');   
+        $cartCount = Cart::count(['conditions' => '(userid = ?1 AND type = ?2 AND orderflag = ?3)','bind' => [1 => $uid, 2 => $type, 3 => '0']]);
+        $this->view->mycart = $cartCount > 0 ?  $cartCount : '0';        
+        $this->view->pick('index/cookies'); 
+    }
+    public function propertyAction(){ 
+        $uid = $this->session->get('id');
+        $type = $this->session->get('type');   
+        $cartCount = Cart::count(['conditions' => '(userid = ?1 AND type = ?2 AND orderflag = ?3)','bind' => [1 => $uid, 2 => $type, 3 => '0']]);
+        $this->view->mycart = $cartCount > 0 ?  $cartCount : '0';        
+        $this->view->pick('index/cookies'); 
+    }
+    public function privacyAction(){ 
+        $uid = $this->session->get('id');
+        $type = $this->session->get('type');   
+        $cartCount = Cart::count(['conditions' => '(userid = ?1 AND type = ?2 AND orderflag = ?3)','bind' => [1 => $uid, 2 => $type, 3 => '0']]);
+        $this->view->mycart = $cartCount > 0 ?  $cartCount : '0';        
+        $this->view->pick('index/cookies'); 
+    }
+    public function cookiesAction(){ 
+        $uid = $this->session->get('id');
+        $type = $this->session->get('type');   
+        $cartCount = Cart::count(['conditions' => '(userid = ?1 AND type = ?2 AND orderflag = ?3)','bind' => [1 => $uid, 2 => $type, 3 => '0']]);
+        $this->view->mycart = $cartCount > 0 ?  $cartCount : '0';        
+        $this->view->pick('index/cookies'); 
+    }
+    public function termsAction(){ 
+        $uid = $this->session->get('id');
+        $type = $this->session->get('type');   
+        $cartCount = Cart::count(['conditions' => '(userid = ?1 AND type = ?2 AND orderflag = ?3)','bind' => [1 => $uid, 2 => $type, 3 => '0']]);
+        $this->view->mycart = $cartCount > 0 ?  $cartCount : '0';        
+        $this->view->pick('index/cookies'); 
+    }
+    public function legalAction(){ 
+        $uid = $this->session->get('id');
+        $type = $this->session->get('type');   
+        $cartCount = Cart::count(['conditions' => '(userid = ?1 AND type = ?2 AND orderflag = ?3)','bind' => [1 => $uid, 2 => $type, 3 => '0']]);
+        $this->view->mycart = $cartCount > 0 ?  $cartCount : '0';        
+        $this->view->pick('index/cookies'); 
+    }
+    public function feedbackAction(){ 
+        $uid = $this->session->get('id');
+        $type = $this->session->get('type');   
+        $cartCount = Cart::count(['conditions' => '(userid = ?1 AND type = ?2 AND orderflag = ?3)','bind' => [1 => $uid, 2 => $type, 3 => '0']]);
+        $this->view->mycart = $cartCount > 0 ?  $cartCount : '0';        
+        $this->view->pick('index/cookies'); 
+    }  
 
     public function doPdfAction() {
         $this->view->disable();
