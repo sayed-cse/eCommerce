@@ -52,6 +52,7 @@ class Module implements ModuleDefinitionInterface
             'SMTP' => BASE_PATH . '/library/phpMailer/SMTP.php',
             'FPDF' => BASE_PATH . '/library/fpdf.php',
             'QRPHP' => BASE_PATH . '/library/qrphp.php',
+            'DbBackup' => BASE_PATH . '/library/DbBackup.php',
         ]);        
         $loader->setDirectories(array(
             APP_PATH . '/front/models/',
@@ -63,6 +64,7 @@ class Module implements ModuleDefinitionInterface
         $loader->setFiles([
             BASE_PATH . '/library/fpdf.php',
             BASE_PATH . '/library/qrphp.php',
+            BASE_PATH . '/library/DbBackup.php',
             BASE_PATH . '/library/phpMailer/PHPMailer.php',
         ]);
         //$loader->setExtensions([ "php","inc","volt","html"]); 
@@ -106,6 +108,8 @@ class Module implements ModuleDefinitionInterface
                     case DispatcherException::EXCEPTION_INVALID_HANDLER:
                     case DispatcherException::EXCEPTION_ACTION_NOT_FOUND:
                     case DispatcherException::EXCEPTION_INVALID_PARAMS:
+                    case DispatcherException::EXCEPTION_CYCLIC_ROUTING:
+                    case DispatcherException::EXCEPTION_NO_DI:
                     $dispatcher->forward(array('controller' => 'error','action' => $action));
                 return false;
                 }

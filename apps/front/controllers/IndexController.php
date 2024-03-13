@@ -890,7 +890,7 @@ foreach ($paginatorInstances as $index => $paginator) { $this->view->{"pstage" .
                 if($query->save() === true){ echo(json_encode('Y')); }else{ echo(json_encode('N')); }
             }
         }else{echo(json_encode('Please Login First!'));}
-    }
+    }   
     public function invoiceAction(){
         $uid = $this->session->get('id');
         $type = $this->session->get('type');
@@ -962,13 +962,14 @@ foreach ($paginatorInstances as $index => $paginator) { $this->view->{"pstage" .
         // Create a new PDF instance
         $pdf = new FPDF("P", "mm", "A5");
         $pdf->AddPage();
+        $pdf->SetAutoPageBreak(false);
         // Set font for entire table
         $pdf->SetFont('Arial', '', 5);
         // Set header background color and text color
         $headerBackgroundColor = array(68, 68, 68); // #444
         $headerTextColor = array(255, 255, 255); // #fff
         // Define column widths
-        $columnWidths = array(20, 8, 15, 15, 15, 10, 15, 20);
+        $columnWidths = array(25, 8, 12, 15, 15, 10, 15, 20);
         // Column headers
         $header = array('OrderID', 'Qty', 'Size', 'Price', 'Discount', 'CoD', 'Shipping', 'Subtotal');
         // Print logo
@@ -994,39 +995,70 @@ foreach ($paginatorInstances as $index => $paginator) { $this->view->{"pstage" .
         $pdf->Ln(1);
 
         $pdf->SetFontSize(5);
+        // Calculate maximum width for header titles
+        $maxWidths = [];
+        foreach ($header as $columnHeader) {
+        $maxWidths[] = $pdf->GetStringWidth($columnHeader);
+        }
+
+        // Calculate maximum width for data
+        foreach ($query as $row) {
+        $rowData = array(
+            $row->orderid,
+            $row->quantity,
+            $row->size,
+            $row->price,
+            $row->discount,
+            $row->cashonfee,
+            $row->shipingcost,
+            ($row->subtotal + $row->shipingcost + $row->cashonfee) - $row->discount
+        );
+
+        foreach ($rowData as $key => $columnData) {
+            $maxWidths[$key] = max($maxWidths[$key], $pdf->GetStringWidth($columnData));
+        }
+        }
+
         // Print column headers
         $pdf->SetFillColor($headerBackgroundColor[0], $headerBackgroundColor[1], $headerBackgroundColor[2]);
         $pdf->SetTextColor($headerTextColor[0], $headerTextColor[1], $headerTextColor[2]);
         $pdf->SetDrawColor(238, 238, 238); // Set border color for header
-        foreach ($header as $key => $columnHeader) { $pdf->Cell($columnWidths[$key], 5, $columnHeader, 1, 0, 'C', true); }
+
+        foreach ($header as $key => $columnHeader) {
+        $pdf->Cell($maxWidths[$key] + 2, 5, $columnHeader, 1, 0, 'C', true);
+        }
         $pdf->Ln();
+
         // actual data
         $rowNum = 0;
         foreach ($query as $row) {
-            $rowNum++;
-            $data = array(
-                $row->orderid,
-                $row->quantity,
-                $row->size,
-                $row->price,
-                $row->discount,
-                $row->cashonfee,
-                $row->shipingcost,
-                ($row->subtotal + $row->shipingcost + $row->cashonfee) - $row->discount
-            );
-            if ($rowNum % 2 == 0) {
-                $bgColor = array(255, 255, 255); // White background for even rows
-            } else {
-                $bgColor = array(240, 240, 240); // Light gray background for odd rows
-            }
-            // Print table data
-            $pdf->SetFillColor($bgColor[0], $bgColor[1], $bgColor[2]);
-            $pdf->SetTextColor(0); // Black text color for zebra stripes
-            $pdf->SetDrawColor(238, 238, 238); // Set border color for table rows
-            foreach ($data as $key => $columnData) {
-                $pdf->Cell($columnWidths[$key], 5, $columnData, 1, 0, 'C', true);
-            }
-            $pdf->Ln();
+        $rowNum++;
+        $rowData = array(
+            $row->orderid,
+            $row->quantity,
+            $row->size,
+            $row->price,
+            $row->discount,
+            $row->cashonfee,
+            $row->shipingcost,
+            ($row->subtotal + $row->shipingcost + $row->cashonfee) - $row->discount
+        );
+
+        if ($rowNum % 2 == 0) {
+            $bgColor = array(255, 255, 255); // White background for even rows
+        } else {
+            $bgColor = array(240, 240, 240); // Light gray background for odd rows
+        }
+
+        // Print table data
+        $pdf->SetFillColor($bgColor[0], $bgColor[1], $bgColor[2]);
+        $pdf->SetTextColor(0); // Black text color for zebra stripes
+        $pdf->SetDrawColor(238, 238, 238); // Set border color for table rows
+
+        foreach ($rowData as $key => $columnData) {
+            $pdf->Cell($maxWidths[$key] + 2, 5, $columnData, 1, 0, 'C', true);
+        }
+        $pdf->Ln();
         }
         // Footer
         $pdf->SetY(-28);
@@ -1034,6 +1066,92 @@ foreach ($paginatorInstances as $index => $paginator) { $this->view->{"pstage" .
         $pdf->Cell(0, 4, 'This is a computer-generated invoice. No seal or signature required.', 0, 0, 'C');
         // Output the PDF as a download
         $pdf->Output('invoice_' . $uid . '.pdf', 'D');
+              
+        // $this->view->disable();
+        // $uid = $this->session->get('id');
+        // $type = $this->session->get('type');
+        // $query = Cart::find(['conditions' => 'userid = ?1 AND type = ?2 AND orderflag = ?3', 'bind' => [1 => $uid, 2 => $type, 3 => 1]]);
+        // // Logo path
+        // $logo = 'img/bee.png'; 
+        // // Create a new PDF instance
+        // $pdf = new FPDF("P", "mm", "A5");
+        // $pdf->AddPage();
+        // $pdf->SetAutoPageBreak(false);
+        // // Set font for entire table
+        // $pdf->SetFont('Arial', '', 5);
+        // // Set header background color and text color
+        // $headerBackgroundColor = array(68, 68, 68); // #444
+        // $headerTextColor = array(255, 255, 255); // #fff
+        // // Define column widths
+        // $columnWidths = array(25, 8, 12, 15, 15, 10, 15, 20);
+        // // Column headers
+        // $header = array('OrderID', 'Qty', 'Size', 'Price', 'Discount', 'CoD', 'Shipping', 'Subtotal');
+        // // Print logo
+        // $pdf->Image($logo, 10, 10, 0, 10); // Adjust the coordinates and size as needed
+        // // Print company details with padding
+        // $pdf->SetXY(50, 12); // Adjust the coordinates as needed
+        // $pdf->Ln(10);
+        // $pdf->Cell(0, 3, 'LampTouch', 0, 1, 'L', false, '', 1);
+        // $pdf->Cell(0, 3, 'Address: 001, Dhaka, Bangladesh', 0, 1, 'L', false, '', 1);
+        // $pdf->Cell(0, 3, 'Contact: +8801234567890', 0, 1, 'L', false, '', 1);
+        // $pdf->Cell(0, 3, 'Email: info@lamptouch.com', 0, 1, 'L', false, '', 1);
+
+        // // Print Bill To client information
+        // $pdf->SetXY(150, 15); // Adjust the coordinates as needed
+        // $pdf->Cell(0, 3, 'Bill To: Client Information Here', 0, 1, 'R', false, '', 1);
+        // $pdf->Cell(0, 3, 'Address: 001, Dhaka, Bangladesh', 0, 1, 'R', false, '', 1);
+        // $pdf->Cell(0, 3, 'Contact: +8801234567890', 0, 1, 'R', false, '', 1);
+        // $pdf->Cell(0, 3, 'Email: info@lamptouch.com', 0, 1, 'R', false, '', 1);
+        // $pdf->Ln(10);
+
+        // $pdf->SetFontSize(16);
+        // $pdf->Cell(0, 10, 'INVOICE', 0, 1, 'B');
+        // $pdf->Ln(1);
+
+        // $pdf->SetFontSize(5);
+        // // Print column headers
+        // $pdf->SetFillColor($headerBackgroundColor[0], $headerBackgroundColor[1], $headerBackgroundColor[2]);
+        // $pdf->SetTextColor($headerTextColor[0], $headerTextColor[1], $headerTextColor[2]);
+        // $pdf->SetDrawColor(238, 238, 238); // Set border color for header
+        // foreach ($header as $key => $columnHeader) { //$pdf->Cell($columnWidths[$key], 5, $columnHeader, 1, 0, 'C', true); 
+        // $pdf->Cell($pdf->GetStringWidth($columnHeader) + 2, 5, $columnHeader, 1, 0, 'C', true);
+        // }
+        // $pdf->Ln();
+        // // actual data
+        // $rowNum = 0;
+        // foreach ($query as $row) {
+        //     $rowNum++;
+        //     $data = array(
+        //         $row->orderid,
+        //         $row->quantity,
+        //         $row->size,
+        //         $row->price,
+        //         $row->discount,
+        //         $row->cashonfee,
+        //         $row->shipingcost,
+        //         ($row->subtotal + $row->shipingcost + $row->cashonfee) - $row->discount
+        //     );
+        //     if ($rowNum % 2 == 0) {
+        //         $bgColor = array(255, 255, 255); // White background for even rows
+        //     } else {
+        //         $bgColor = array(240, 240, 240); // Light gray background for odd rows
+        //     }
+        //     // Print table data
+        //     $pdf->SetFillColor($bgColor[0], $bgColor[1], $bgColor[2]);
+        //     $pdf->SetTextColor(0); // Black text color for zebra stripes
+        //     $pdf->SetDrawColor(238, 238, 238); // Set border color for table rows
+        //     foreach ($data as $key => $columnData) {
+        //         //$pdf->Cell($columnWidths[$key], 5, $columnData, 1, 0, 'C', true);
+        //         $pdf->Cell($pdf->GetStringWidth($columnData) + 2, 5, $columnData, 1, 0, 'C', true);
+        //     }
+        //     $pdf->Ln();
+        // }
+        // // Footer
+        // $pdf->SetY(-28);
+        // $pdf->SetFont('Arial', '', 8);
+        // $pdf->Cell(0, 4, 'This is a computer-generated invoice. No seal or signature required.', 0, 0, 'C');
+        // // Output the PDF as a download
+        // $pdf->Output('invoice_' . $uid . '.pdf', 'D');
     }
     public function feedAction()
     {

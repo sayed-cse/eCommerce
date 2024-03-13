@@ -6,13 +6,11 @@ use Phalcon\Mvc\Model;
 class BaseModel extends Model
 {
   // public $db;
-   public function initialize()
-   {
+  public function initialize()
+  {
       $this->setSchema("phalconshop");
-      //$this->db = $this->getDi()->getShared('db');
-		#$this->addBehavior(new Timestampable(['beforeCreate' => ['field'  => 'created_at','format' => 'dmY-His',] ]));   #Dynamic insert/update dateTime in created_at field	
-   }  
-    
+      #$this->addBehavior(new Timestampable(['beforeCreate' => ['field' => 'created_at', 'format' => 'dmY-His']])); #Dynamic insert/update dateTime in created_at field
+  }   
 # Skip NULL Fields No create OR Update By Default
 	// public function beforeValidationOnCreate()
  //    {

@@ -78,5 +78,11 @@ class Products extends BaseModel
 	// {
 	// 	$this->modified_in = date("Y-m-d H:i:s");
 	// 	die();
-	// }  	
+	// } 
+    // public function afterUpdate()
+    // {
+    //     // Call backup function after each successful update
+    //     $backup = new DbBackup($this->getDI()->get('db'));
+    //     $backup->backupDatabase();
+    // }            	
 }
