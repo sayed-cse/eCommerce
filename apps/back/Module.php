@@ -30,30 +30,37 @@ class Module implements ModuleDefinitionInterface
     public function registerAutoloaders(DiInterface $di = null)
     {
         $loader = new Loader();
-#Register NameSpaces
-        $loader->setNamespaces(
-            [
-                'F\Back\Controllers' => APP_PATH . '/back/controllers/',
-                'F\Back\Models'      => APP_PATH . '/back/models/',
-            ]
-        );
-# Register Classes
-        $loader->setClasses([
-            'PHPMailer' => BASE_PATH . '/library/PHPMailer.php',
+    #Register NameSpaces
+        $loader->setNamespaces([
+            'F\Back\Controllers' => APP_PATH . '/back/controllers/',
+            'F\Back\Models'      => APP_PATH . '/back/models/',
+            'F\Back\Libraries'    => BASE_PATH . '/library/',
+            'PHPMailer\PHPMailer' => BASE_PATH . '/library/phpMailer/',
         ]);
-# Register Dir
+    # Register Classes    
+        $loader->setClasses([
+            'PHPMailer' => BASE_PATH . '/library/phpMailer/PHPMailer.php',
+            'SMTP' => BASE_PATH . '/library/phpMailer/SMTP.php',
+            'FPDF' => BASE_PATH . '/library/fpdf.php',
+            'QRPHP' => BASE_PATH . '/library/qrphp.php',
+            'DbBackup' => BASE_PATH . '/library/DbBackup.php',
+        ]);
+    # Register Dir          
         $loader->setDirectories(array(
             APP_PATH . '/back/models/',
+            APP_PATH . '/back/forms/',
             BASE_PATH . '/plugins/',
             BASE_PATH . '/library/',
             BASE_PATH . '/helpers/',
         ),true);
-# Register Files 
+    # Register Files    
         $loader->setFiles([
             BASE_PATH . '/library/fpdf.php',
+            BASE_PATH . '/library/qrphp.php',
+            BASE_PATH . '/library/DbBackup.php',
             BASE_PATH . '/library/phpMailer/PHPMailer.php',
         ]);
-        $loader->register();
+        if(false === $loader->isRegistered()) { $loader->register(); } 
     }
     public function registerServices(DiInterface $di = null)
     {
@@ -69,14 +76,21 @@ class Module implements ModuleDefinitionInterface
         // Registering a dispatcher
         $di->set('dispatcher',function () {
             $eventManager = new evManager();
-            $eventManager->attach("dispatch:beforeException", function (Event $event, $dispatcher, DispatcherException $exception) {
+            // $eventManager->attach("dispatch:afterUpdate", function (Event $event, $dispatcher, $model = null) {
+            //     if ($model instanceof Model) {
+            //         $backupFolderPath = BASE_PATH . "/public/schemas";
+            //         $backup = new \F\Back\Libraries\DbBackup($model->getDI()->get('db'), $backupFolderPath);
+            //         $backup->backupDatabase();
+            //     }
+            // });
+            $eventManager->attach("dispatch:beforeException", function (Event $event, $dispatcher, DispatcherException $exception = null) {
             $action = 'show503';
             if($exception instanceof DispatcherException){
             $action = 'show404';
                 switch ($exception->getCode()){
                     case DispatcherException::EXCEPTION_HANDLER_NOT_FOUND:
-                    case DispatcherException::EXCEPTION_ACTION_NOT_FOUND:
                     case DispatcherException::EXCEPTION_INVALID_HANDLER:
+                    case DispatcherException::EXCEPTION_ACTION_NOT_FOUND:
                     case DispatcherException::EXCEPTION_INVALID_PARAMS:
                     $dispatcher->forward(array('controller' => 'error','action' => $action));
                 return false;
@@ -114,28 +128,31 @@ class Module implements ModuleDefinitionInterface
         },true);
 
 # Database        
-    $di->setShared('db', function() use ($config){
-        $db = new DbAdapter(array(
+    $di->setShared('db', function() use ($config) {
+        #if(true !== is_dir(BASE_PATH . '/public/schemas')){ mkdir(BASE_PATH . '/public/schemas', 777,true); }
+        $db = new DbAdapter([
             'adapter'   => $config->database->mysql->adapter,
             'host'      => $config->database->mysql->host,
             'username'  => $config->database->mysql->username,
             'password'  => $config->database->mysql->password,
             'dbname'    => $config->database->mysql->dbname,
             'charset'   => $config->database->mysql->charset,
-            'options'   => array(
-            \PDO::MYSQL_ATTR_INIT_COMMAND       => 'SET NAMES utf8mb4, time_zone = "+06:00"',
-            \PDO::ATTR_CASE                     => \PDO::CASE_LOWER,
-            \PDO::ATTR_DEFAULT_FETCH_MODE       => \PDO::FETCH_BOTH,
-            \PDO::ATTR_ERRMODE                  => \PDO::ERRMODE_EXCEPTION,
-            \PDO::ATTR_PERSISTENT               => FALSE,                       
-            \PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => TRUE,
-            \PDO::MYSQL_ATTR_COMPRESS           => TRUE,
-            \PDO::ATTR_AUTOCOMMIT               => TRUE,             
-            #\PDO::MYSQL_ATTR_SSL_CA             => "/home/ubuntu/YOUR_PEM_FILE_HERE",
-            )
-        ));
+            'options'   => [
+                \PDO::MYSQL_ATTR_INIT_COMMAND       => 'SET NAMES utf8mb4, time_zone = "+06:00"',
+                \PDO::ATTR_CASE                     => \PDO::CASE_LOWER,
+                \PDO::ATTR_DEFAULT_FETCH_MODE       => \PDO::FETCH_BOTH,
+                \PDO::ATTR_ERRMODE                  => \PDO::ERRMODE_EXCEPTION,
+                \PDO::ATTR_PERSISTENT               => false,                       
+                \PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true,
+                \PDO::MYSQL_ATTR_COMPRESS           => true,
+                \PDO::ATTR_AUTOCOMMIT               => true,             
+                // Uncomment the line below if you're using SSL
+                // \PDO::MYSQL_ATTR_SSL_CA             => "/home/ubuntu/YOUR_PEM_FILE_HERE",
+            ]
+        ]);
         return $db;
-    });        
+    });
+
 # Session
     # For Redis
     // $di->setShared('session', function(){

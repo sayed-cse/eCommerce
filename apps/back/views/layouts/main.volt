@@ -1,4 +1,4 @@
-<?php #ob_start("ob_compress");function ob_compress($buf = null){return preg_replace(array('/<!--(.*)-->/Uis',"/[[:blank:]]+/"),array('',' '),str_replace(array("\n","\r","\t"),'',$buf) );} 
+<?php ob_start("ob_compress");function ob_compress($buf = null){return preg_replace(array('/<!--(.*)-->/Uis',"/[[:blank:]]+/"),array('',' '),str_replace(array("\n","\r","\t"),'',$buf) );} 
 $nonce = bin2hex(base64_encode(random_bytes(32).date('dmYHis'))); ?>{{ get_doctype() }}
 <html dir="ltr" lang="en-US">
 <head>
