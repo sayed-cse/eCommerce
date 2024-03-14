@@ -45,13 +45,14 @@ class Module implements ModuleDefinitionInterface
             'F\Front\Controllers' => APP_PATH . '/front/controllers/',
             'F\Front\Models'      => APP_PATH . '/front/models/',
             'F\Libraries\BackupDB'    => BASE_PATH . '/library/',
+            'F\Libraries\RQueue'    => BASE_PATH . '/library/',
             'PHPMailer\PHPMailer' => BASE_PATH . '/library/phpMailer/',
         ]);
         $loader->setClasses([
             'PHPMailer' => BASE_PATH . '/library/phpMailer/PHPMailer.php',
             'SMTP' => BASE_PATH . '/library/phpMailer/SMTP.php',
             'FPDF' => BASE_PATH . '/library/fpdf.php',
-            'QRPHP' => BASE_PATH . '/library/qrphp.php',
+            'RedisQueueHandler' => BASE_PATH . '/library/RedisQueueHandler.php',
             'DbBackup' => BASE_PATH . '/library/DbBackup.php',
         ]);        
         $loader->setDirectories(array(
@@ -63,7 +64,7 @@ class Module implements ModuleDefinitionInterface
         ),true);
         $loader->setFiles([
             BASE_PATH . '/library/fpdf.php',
-            BASE_PATH . '/library/qrphp.php',
+            BASE_PATH . '/library/RedisQueueHandler.php',
             BASE_PATH . '/library/DbBackup.php',
             BASE_PATH . '/library/phpMailer/PHPMailer.php',
         ]);
