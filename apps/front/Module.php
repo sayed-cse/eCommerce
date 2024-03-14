@@ -22,14 +22,10 @@ use Phalcon\Cache\Adapter\AdapterInterface;
 //use Phalcon\Cache\Adapter\Redis;
 //use Phalcon\Cache\Adapter\Apcu;
 
-
 use Phalcon\Storage\Adapter\Redis;
 use Phalcon\Storage\SerializerFactory;
 use Phalcon\Storage\Serializer\Json;
 use Phalcon\Storage\Serializer\RedisJson;
-
-
-
 use Phalcon\Session\Manager as SessionManager;
 use Phalcon\Session\Adapter\Stream as Stream;
 use Phalcon\Flash\Session as FlashSession;
