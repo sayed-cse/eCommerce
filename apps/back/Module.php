@@ -35,6 +35,7 @@ class Module implements ModuleDefinitionInterface
             'F\Back\Controllers' => APP_PATH . '/back/controllers/',
             'F\Back\Models'      => APP_PATH . '/back/models/',
             'F\Libraries\BackupDB'    => BASE_PATH . '/library/',
+            'F\Libraries\RQueue'    => BASE_PATH . '/library/',
             'PHPMailer\PHPMailer' => BASE_PATH . '/library/phpMailer/',
         ]);
     # Register Classes    
@@ -42,7 +43,7 @@ class Module implements ModuleDefinitionInterface
             'PHPMailer' => BASE_PATH . '/library/phpMailer/PHPMailer.php',
             'SMTP' => BASE_PATH . '/library/phpMailer/SMTP.php',
             'FPDF' => BASE_PATH . '/library/fpdf.php',
-            'QRPHP' => BASE_PATH . '/library/qrphp.php',
+            'RedisQueueHandler' => BASE_PATH . '/library/RedisQueueHandler.php',
             'DbBackup' => BASE_PATH . '/library/DbBackup.php',
         ]);
     # Register Dir          
@@ -56,7 +57,7 @@ class Module implements ModuleDefinitionInterface
     # Register Files    
         $loader->setFiles([
             BASE_PATH . '/library/fpdf.php',
-            BASE_PATH . '/library/qrphp.php',
+            BASE_PATH . '/library/RedisQueueHandler.php',
             BASE_PATH . '/library/DbBackup.php',
             BASE_PATH . '/library/phpMailer/PHPMailer.php',
         ]);
