@@ -44,7 +44,7 @@ class Module implements ModuleDefinitionInterface
         $loader->setNamespaces([
             'F\Front\Controllers' => APP_PATH . '/front/controllers/',
             'F\Front\Models'      => APP_PATH . '/front/models/',
-            'F\Front\Libraries'    => BASE_PATH . '/library/',
+            'F\Libraries\BackupDB'    => BASE_PATH . '/library/',
             'PHPMailer\PHPMailer' => BASE_PATH . '/library/phpMailer/',
         ]);
         $loader->setClasses([
