@@ -18,7 +18,7 @@ class BaseModel extends Model
   {
       // Call backup function after each successful update
       $backupFolderPath = BASE_PATH . "/public/schemas"; // Specify the folder where backups will be stored
-      $backup = new \F\Back\Libraries\DbBackup($this->getDI()->get('db'), $backupFolderPath);
+      $backup = new \F\Libraries\BackupDB\DbBackup($this->getDI()->get('db'), $backupFolderPath);
       $backup->backupDatabase();
   }
 
