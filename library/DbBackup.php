@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace F\Back\Libraries;
+namespace F\Libraries\BackupDB;
 
 use Phalcon\Db\Adapter\Pdo\AbstractPdo;
 
@@ -40,7 +40,7 @@ class DbBackup
 
         if (!is_resource($process)) {
             error_log("Failed to initiate mysqldump process.");
-            echo "Failed to initiate mysqldump process.";
+            #echo "Failed to initiate mysqldump process.";
             return;
         }
 
@@ -52,10 +52,10 @@ class DbBackup
         $return_value = proc_close($process); // Close process
 
         if ($return_value === 0) {
-            echo "Database backup created successfully: $backupFilePath";
+            #echo "Database backup created successfully: $backupFilePath";
             error_log("Database backup created successfully: $backupFilePath");
         } else {
-            echo "Errors occurred during database backup: $errors";
+            #echo "Errors occurred during database backup: $errors";
             error_log("Errors occurred during database backup: $errors");
         }
     }
